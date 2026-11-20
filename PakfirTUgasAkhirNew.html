@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tukusembarang</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        softBlue: {
+                            50: '#F4F8FC',
+                            100: '#E6F0FA',
+                            200: '#D1E3F6',
+                            300: '#B8D4F2',
+                            400: '#8BB7E8',
+                            500: '#5C98DE',
+                            600: '#3B79C9',
+                            700: '#2A5BA1',
+                            800: '#1E4074',
+                            900: '#14294B'
+                        },
+                        slateDark: '#2C3E50'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f8fc;
+            color: #2c3e50;
+        }
+        ::-webkit-scrollbar {
+            width: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f4f8fc;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbdcf4;
+            border-radius: 4px;
+        }
+        .flat-card {
+            background: #ffffff;
+            border: 1px solid #dce7f5 !important;
+            border-radius: 0.5rem !important;
+        }
+        .flat-card:hover {
+            border-color: #dce7f5 !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+        .handcrafted-nav {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid #dce7f5;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased">
+    <header class="sticky top-0 z-30 handcrafted-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            <div class="cursor-pointer" onclick="resetFilters()">
+                <h1 class="text-xl font-bold tracking-tight text-slateDark leading-none">Tukusembarang</h1>
+                <span class="text-[11px] text-softBlue-600 font-semibold tracking-wide uppercase">Marketplace Brand Lokal Indonesia No.1</span>
+            </div>
+            <div class="hidden md:flex flex-1 max-w-md mx-4 relative">
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Cari barang kebutuhan tugas, aksesoris, jajanan..." 
+                    class="w-full bg-softBlue-50/60 hover:bg-white focus:bg-white border border-softBlue-200 text-slateDark text-sm rounded-lg pl-11 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-softBlue-400">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-softBlue-400"></i>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleCartDrawer()" class="relative p-2.5 bg-white text-slateDark rounded-lg border border-softBlue-200">
+                    <i class="fa-solid fa-cart-shopping text-base text-softBlue-700"></i>
+                    <span id="cartBadgeCount" class="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
+                </button>
+                <div class="h-7 w-[1px] bg-softBlue-200 hidden sm:block"></div>
+                <div class="hidden sm:flex items-center gap-2.5 pl-1">
+                    <div class="w-9 h-9 rounded-lg bg-softBlue-100 flex items-center justify-center text-softBlue-800 font-bold text-xs border border-softBlue-200">
+                        R
+                    </div>
+                    <div class="text-left text-xs">
+                        <p class="font-bold text-slateDark">Raeesa</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="px-4 pb-3.5 md:hidden">
+            <div class="relative">
+                <input type="text" id="searchInputMobile" oninput="handleSearchMobile()" placeholder="Cari barang kebutuhan..." 
+                    class="w-full bg-softBlue-50/70 border border-softBlue-200 text-slateDark text-sm rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-softBlue-400">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-softBlue-400 text-sm"></i>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
+                <button onclick="filterCategory('All')" data-category="All" class="category-btn active px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-softBlue-600 text-white">
+                    Semua Produk
+                </button>
+                <button onclick="filterCategory('Elektronik')" data-category="Elektronik" class="category-btn px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-white text-slateDark border border-softBlue-200">
+                    Elektronik
+                </button>
+                <button onclick="filterCategory('Buku & Alat Tulis')" data-category="Buku & Alat Tulis" class="category-btn px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-white text-slateDark border border-softBlue-200">
+                    Buku & ATK
+                </button>
+                <button onclick="filterCategory('Fashion')" data-category="Fashion" class="category-btn px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-white text-slateDark border border-softBlue-200">
+                    Fashion
+                </button>
+                <button onclick="filterCategory('Snack & Kopi')" data-category="Snack & Kopi" class="category-btn px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-white text-slateDark border border-softBlue-200">
+                    Snack & Kopi
+                </button>
+            </div>
+            <div class="text-xs font-medium text-gray-500 self-end md:self-auto">
+                Menampilkan <span id="productCount" class="font-bold text-softBlue-700">0</span> produk
+            </div>
+        </div>
+
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"></div>
+
+        <div id="emptyState" class="hidden text-center py-16">
+            <div class="w-16 h-16 mx-auto bg-softBlue-100 border border-softBlue-200 rounded-lg flex items-center justify-center text-softBlue-500 mb-4">
+                <i class="fa-solid fa-box-open text-2xl"></i>
+            </div>
+            <h3 class="text-base font-bold text-slateDark">Produk Tidak Ditemukan</h3>
+            <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-softBlue-600 text-white rounded-lg text-xs font-semibold">
+                Reset Filter
+            </button>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-softBlue-200 mt-12 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+                <p class="font-bold text-slateDark text-sm">Tukusembarang © 2026</p>
+                <p class="text-xs text-gray-400 mt-0.5">Web Marketplace lokal terpercaya</p>
+            </div>
+            <div class="flex items-center gap-4 text-xs text-gray-500">
+                <span>Syarat & Ketentuan</span>
+                <span>.</span>
+                <span>Bantuan</span>
+            </div>
+        </div>
+    </footer>
+
+    <div id="productModal" class="fixed inset-0 z-50 bg-slateDark/35 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-lg max-w-lg w-full overflow-hidden border border-softBlue-200">
+            <div class="relative">
+                <img id="modalImage" src="" alt="" class="w-full h-64 object-cover bg-softBlue-50">
+                <button onclick="closeModal()" class="absolute top-4 right-4 bg-white text-slateDark p-2 rounded-lg border border-softBlue-200">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+                <span id="modalCategory" class="absolute bottom-4 left-4 bg-white text-softBlue-800 border border-softBlue-200 text-xs px-3 py-1 rounded-md font-semibold"></span>
+            </div>
+            <div class="p-6">
+                <div class="flex justify-between items-start gap-2 mb-2">
+                    <h3 id="modalTitle" class="text-lg font-bold text-slateDark"></h3>
+                    <div class="flex items-center gap-1 text-amber-500 text-xs font-bold bg-amber-50 px-2 py-1 rounded-md border border-amber-200 shrink-0">
+                        <i class="fa-solid fa-star"></i>
+                        <span id="modalRating"></span>
+                    </div>
+                </div>
+                <p id="modalDescription" class="text-gray-600 text-xs leading-relaxed mb-6"></p>
+                <div class="flex items-center justify-between pt-4 border-t border-softBlue-100">
+                    <div>
+                        <span class="text-[10px] text-gray-400 block font-medium">Harga</span>
+                        <span id="modalPrice" class="text-lg font-extrabold text-softBlue-700"></span>
+                    </div>
+                    <button id="modalAddBtn" onclick="" class="px-5 py-2.5 bg-softBlue-600 text-white text-xs font-semibold rounded-lg flex items-center gap-2">
+                        <i class="fa-solid fa-cart-plus"></i> Tambah Keranjang
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div onclick="toggleCartDrawer()" class="absolute inset-0 bg-slateDark/35"></div>
+        <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white flex flex-col justify-between border-l border-softBlue-200">
+                <div class="p-5 bg-softBlue-50/70 border-b border-softBlue-200 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-md bg-softBlue-100 flex items-center justify-center text-softBlue-700">
+                            <i class="fa-solid fa-bag-shopping text-sm"></i>
+                        </div>
+                        <h2 class="text-base font-bold text-slateDark">Keranjang Belanja</h2>
+                    </div>
+                    <button onclick="toggleCartDrawer()" class="p-2 text-gray-400 hover:text-slateDark">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <div id="cartItemsContainer" class="p-6 flex-1 overflow-y-auto divide-y divide-softBlue-100"></div>
+                <div class="p-6 bg-white border-t border-softBlue-200 space-y-4">
+                    <div class="space-y-1.5 text-xs">
+                        <div class="flex justify-between text-gray-500">
+                            <span>Subtotal</span>
+                            <span id="cartSubtotal" class="font-medium text-slateDark">Rp 0</span>
+                        </div>
+                        <div class="flex justify-between text-gray-500">
+                            <span>Biaya Layanan</span>
+                            <span class="text-emerald-600 font-semibold">Gratis</span>
+                        </div>
+                        <div class="flex justify-between text-sm font-bold text-slateDark pt-2.5 border-t border-dashed border-softBlue-200">
+                            <span>Total Pembayaran</span>
+                            <span id="cartTotal" class="text-softBlue-700 font-extrabold text-base">Rp 0</span>
+                        </div>
+                    </div>
+                    <button onclick="processCheckout()" id="checkoutBtn" disabled class="w-full py-3 bg-softBlue-600 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white font-bold text-xs rounded-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-credit-card"></i>Checkout Sekarang
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slateDark text-white px-4 py-3 rounded-lg flex items-center gap-3 hidden border border-softBlue-400/20">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toastMessage" class="text-xs font-semibold"></span>
+    </div>
+
+    <script>
+        const products = [
+            {
+                id: 1,
+                name: "POLYTRON 4K UHD Smart Cinemax Soundbar Google TV 50 Inch - PLD 50BUG3058",
+                category: "Elektronik",
+                price: 6189000,
+                rating: 4.8,
+                image: "https://cdn.polytron.co.id/public-assets/polytroncoid/2026/06/PLD-50BUG3058.webp",
+                description: "Smart TV 50 inci layar tajam 4K UHD berteknologi Dolby Vision dan sistem operasi Google TV. Sudah termasuk Soundbar + Subwoofer eksternal bawaan."
+            },
+            {
+                id: 2,
+                name: "Buku Sidu 58 Lembar",
+                category: "Buku & Alat Tulis",
+                price: 53500,
+                rating: 4.9,
+                image: "https://down-id.img.susercontent.com/file/id-11134207-7qul7-li9qt2mrzw7yd4",
+                description: "Buku catatan dgn garis biru"
+            },
+            {
+                id: 3,
+                name: "Jaket Hurricane Outdoor Waterproof Black",
+                category: "Fashion",
+                price: 680000,
+                rating: 4.9,
+                image: "https://images.tokopedia.net/img/cache/700/aphluv/1997/1/1/255794a2687648a3862454e8374af674~.jpeg.webp",
+                description: "Jaket outdoor bergaya gorpcore tahan air dan tahan angin. Menggunakan material Goretex 2.5L berkualitas tinggi."
+            },
+            {
+                id: 4,
+                name: "Good Day Coffee Sachet Kopi 3in1 Instan (All Varian) - Original",
+                category: "Snack & Kopi",
+                price: 47900,
+                rating: 4.9,
+                image: "https://images.tokopedia.net/img/cache/700/VqbcmM/2022/2/3/29d8857d-6e83-41be-ba8c-30363f1a0a9c.jpg.webp",
+                description: "Good Day Kopi Instant 3in1 isi 10 pcs x 20 g adalah minuman serbuk kopi instan dengan kopi, gula, dan krimer dalam satu sachet dengan cita rasa mocacinno yang lezat. Menghadirkan 10 kemasan sachet kopi Good Day instan dalam satu bag untuk hari-harimu yang penuh warna. Kopi dengan rasa mocca yang istimewa dalam setiap gelasnya menjadikan kopi ini sangat pas dinikmati dalam setiap momen seru. Cocok untuk dinikmati ketika dingin atau panas. Tersedia dalam kemasan bag isi 10 sachet @ 20 gram"
+            },
+            {
+                id: 5,
+                name: "RAINGEL-Sepatu lokal-Fort-Pink",
+                category: "Fashion",
+                price: 245000,
+                rating: 5.0,
+                image: "https://down-id.img.susercontent.com/file/id-11134207-82251-mfuxoij9730rb5",
+                description: "Sneakers kasual lokal berdesain low-cut unisex dengan sentuhan warna pink yang stylish dan nyaman."
+            },
+            {
+                id: 6,
+                name: "Rexus Keyboard Gaming Mechanical Legionare MX9 TKL RGB",
+                category: "Elektronik",
+                price: 665000,
+                rating: 4.8,
+                image: "https://rexus.id/cdn/shop/files/MX_9_3_146a6991-16e4-47d8-a225-24984a6c14d5.png?v=1705906289&width=800",
+                description: "Rexus Gaming Keyboard Legionare MX9 memberikan pengguna pilihan untuk menentukan switch yang sesuai dengan karakteristiknya. Terdapat dua pilihan switch, yaitu switch Biru dan Merah. Biru adalah switch yang paling “clicky” dengan actuation force sekitar 50-55gram dan switch merah mempunyai karakter yang lembut dengan actuation force sekitar 45-50gram."
+            },
+            {
+                id: 7,
+                name: "Highlighter Joyko Pastel Color HL-55",
+                category: "Buku & Alat Tulis",
+                price: 47326,
+                rating: 4.7,
+                image: "https://down-id.img.susercontent.com/file/id-11134207-7qul4-lezhbuxrr1o5f6",
+                description: "Stabilo warna pastel lembut tidak mencolok di mata untuk menandai poin penting catatan."
+            },
+            {
+                id: 8,
+                name: "Chitato 65 Gr All Varian Package",
+                category: "Snack & Kopi",
+                price: 84900,
+                rating: 4.5,
+                image: "https://down-id.img.susercontent.com/file/id-11134207-7rbkc-ma5ds5odbhqtcf",
+                description: "Chitato 65 Gr All Varian Package kini hadir untuk temani hari-hari biar makin seru! Potongan kentang wavy mengunci bumbu-bumbu untuk berikan bold flavors yang jadikan sensasi nendang di mulut. Cocok dinikmati sendiri, lebih asik disantap berramai-ramai saat nongkrong bersama."
+            }
+        ];
+
+        let cart = [];
+        let activeCategory = 'All';
+        let searchQuery = '';
+
+        const formatRupiah = (number) => {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
+        };
+
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            const filtered = products.filter(p => {
+                const matchesCategory = activeCategory === 'All' || p.category === activeCategory;
+                const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      p.description.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            document.getElementById('productCount').textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.innerHTML = filtered.map(product => `
+                <div class="flat-card p-4 flex flex-col justify-between">
+                    <div>
+                        <div class="relative overflow-hidden rounded-md mb-3 aspect-square bg-softBlue-50">
+                            <img src="${product.image}" alt="${product.name}" 
+                                class="w-full h-full object-cover"
+                                onerror="this.src='https://placehold.co/400x400/E6F0FA/2C3E50?text=Produk'">
+                            <span class="absolute top-2.5 left-2.5 bg-white text-softBlue-800 text-[11px] px-2.5 py-0.5 rounded-md font-semibold border border-softBlue-200">
+                                ${product.category}
+                            </span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between text-xs text-amber-500 font-semibold mb-1">
+                            <span><i class="fa-solid fa-star"></i> ${product.rating}</span>
+                        </div>
+                        <h3 onclick="openModal(${product.id})" class="font-bold text-slateDark text-sm line-clamp-1 hover:text-softBlue-600 cursor-pointer">
+                            ${product.name}
+                        </h3>
+                        <p class="text-xs text-gray-500 line-clamp-2 mt-1 mb-4 leading-relaxed">
+                            ${product.description}
+                        </p>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-3 border-t border-softBlue-100">
+                        <div>
+                            <span class="text-[10px] text-gray-400 block font-medium">Harga</span>
+                            <span class="text-sm font-extrabold text-softBlue-700">${formatRupiah(product.price)}</span>
+                        </div>
+                        <button onclick="addToCart(${product.id})" class="p-2.5 bg-softBlue-50 text-softBlue-700 border border-softBlue-200 rounded-lg">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('searchInput').value;
+            renderProducts();
+        }
+
+        function handleSearchMobile() {
+            searchQuery = document.getElementById('searchInputMobile').value;
+            renderProducts();
+        }
+
+        function filterCategory(category) {
+            activeCategory = category;
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => {
+                const btnCategory = btn.getAttribute('data-category');
+                if (btnCategory === category) {
+                    btn.className = 'category-btn active px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-softBlue-600 text-white';
+                } else {
+                    btn.className = 'category-btn px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-white text-slateDark border border-softBlue-200';
+                }
+            });
+            renderProducts();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchInputMobile').value = '';
+            searchQuery = '';
+            filterCategory('All');
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+
+            updateCartUI();
+        }
+
+        function updateQuantity(productId, change) {
+            const item = cart.find(i => i.id === productId);
+            if (item) {
+                item.qty += change;
+                if (item.qty <= 0) {
+                    cart = cart.filter(i => i.id !== productId);
+                }
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cartItemsContainer');
+            const badge = document.getElementById('cartBadgeCount');
+            const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+            if (totalCount > 0) {
+                badge.textContent = totalCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+
+            document.getElementById('cartSubtotal').textContent = formatRupiah(totalPrice);
+            document.getElementById('cartTotal').textContent = formatRupiah(totalPrice);
+            document.getElementById('checkoutBtn').disabled = cart.length === 0;
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="fa-solid fa-cart-flatbed text-3xl mb-3 text-softBlue-200"></i>
+                        <p class="text-xs font-semibold text-slateDark">Keranjang masih kosong</p>
+                        <p class="text-[11px] text-gray-400 mt-1">Yuk pilih barang dulu!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = cart.map(item => `
+                <div class="py-3.5 flex items-center justify-between gap-3">
+                    <img src="${item.image}" alt="${item.name}" class="w-12 h-12 rounded-lg object-cover bg-softBlue-50 border border-softBlue-100">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-xs font-bold text-slateDark truncate">${item.name}</h4>
+                        <p class="text-xs font-bold text-softBlue-700">${formatRupiah(item.price)}</p>
+                    </div>
+                    <div class="flex items-center gap-1.5 bg-softBlue-50 border border-softBlue-200 rounded-lg px-2 py-1">
+                        <button onclick="updateQuantity(${item.id}, -1)" class="text-softBlue-700 font-bold text-xs px-1">-</button>
+                        <span class="text-xs font-bold text-slateDark w-4 text-center">${item.qty}</span>
+                        <button onclick="updateQuantity(${item.id}, 1)" class="text-softBlue-700 font-bold text-xs px-1">+</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleCartDrawer() {
+            const drawer = document.getElementById('cartDrawer');
+            drawer.classList.toggle('hidden');
+        }
+
+        function openModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            document.getElementById('modalImage').src = product.image;
+            document.getElementById('modalTitle').textContent = product.name;
+            document.getElementById('modalCategory').textContent = product.category;
+            document.getElementById('modalRating').textContent = product.rating;
+            document.getElementById('modalDescription').textContent = product.description;
+            document.getElementById('modalPrice').textContent = formatRupiah(product.price);
+            
+            const btn = document.getElementById('modalAddBtn');
+            btn.onclick = () => {
+                addToCart(product.id);
+                closeModal();
+            };
+
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        function processCheckout() {
+            if (cart.length === 0) return;
+            cart = [];
+            updateCartUI();
+            toggleCartDrawer();
+            showToast("🎉 Pesanan berhasil dibuat!");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.remove('hidden');
+
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        window.onload = function() {
+            renderProducts();
+            updateCartUI();
+        };
+    </script>
+</body>
+</html>
